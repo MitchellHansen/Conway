@@ -1,13 +1,13 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include <random>
 #include <windows.h>
 #include "Node.h"
+#include <thread>
 #include <stack>
 
-const int WINDOW_X = 600;
-const int WINDOW_Y = 800;
+const int WINDOW_X = 1000;
+const int WINDOW_Y = 1000;
 
 float elap_time() {
 	static __int64 start = 0;
@@ -24,14 +24,20 @@ float elap_time() {
 	return (float)((counter - start) / double(frequency));
 }
 
+void updateRange(std::vector<Node> *node_vec, int start_range_, int end_range_) {
+	for (int i = start_range_; i < end_range_; i++) {
+		node_vec->operator[](i).Update(node_vec);
+	}
+}
+
+
+
 int main() {
 
 	std::mt19937 rng(time(NULL));
 	std::uniform_int_distribution<int> rgen(0, 4);
 
 	std::vector<Node> node_vec;
-	std::stack<Node*>* front_stack = new std::stack<Node*>();
-	std::stack<Node*>* back_stack = new std::stack<Node*>();
 
 	// Init nodes, random value, push to front_stack
 	for (int x = 0; x < Node::x_bound; x++) {
@@ -39,21 +45,14 @@ int main() {
 			node_vec.push_back(Node(sf::Vector2i(x, y)));
 			if (rgen(rng) == 1) {
 				node_vec.at(node_vec.size() - 1).Revive();
-				front_stack->push(&node_vec.at(node_vec.size() - 1));
 			}
 		}
 	}
 
 	// Spites for drawing, probably where the biggest slowdown is
 	sf::RectangleShape live_node;
-	sf::RectangleShape dead_node;
-
-	live_node.setFillColor(sf::Color::Blue);
-	dead_node.setFillColor(sf::Color::Green);
-
+	live_node.setFillColor(sf::Color(145, 181, 207));
 	live_node.setSize(sf::Vector2f(WINDOW_X / Node::x_bound, WINDOW_Y / Node::y_bound));
-	dead_node.setSize(sf::Vector2f(WINDOW_X / Node::x_bound, WINDOW_Y / Node::y_bound));
-
 
 	// Init window, and loop data
 	sf::RenderWindow window(sf::VideoMode(WINDOW_X, WINDOW_Y), "Classic Games");
@@ -62,6 +61,7 @@ int main() {
 	double frame_time = 0.0, elapsed_time = 0.0, delta_time = 0.0, accumulator_time = 0.0, current_time = 0.0;
 	int frame_count = 0;
 
+	std::stack<std::thread> thread_stack;
 
 	while (window.isOpen()) {
 
@@ -86,14 +86,22 @@ int main() {
 		}
 
 		// Implicit dead node color
-		window.clear(sf::Color::Black);
+		window.clear(sf::Color(49, 68, 72));
 
-		for (int i = 0; i < node_vec.size(); i++) {
-			node_vec.at(i).Update(&node_vec);
+		for (int i = 0; i < 12; i++) {
+			thread_stack.emplace(updateRange, &node_vec, (node_vec.size() / 12)* i, (node_vec.size() / 12)* (i + 1));
+		}
+		while (!thread_stack.empty()) {
+			thread_stack.top().join();
+			thread_stack.pop();
 		}
 
+		//for (int i = 0; i < node_vec.size(); i++) {
+		//	node_vec.at(i).Update(&node_vec);
+		//}
+
 		for (int i = 0; i < node_vec.size(); i++) {
-			node_vec.at(i).ShiftState();
+			node_vec[i].ShiftState();
 		}
 
 		for (int i = 0; i < node_vec.size(); i++) {

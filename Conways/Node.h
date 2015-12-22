@@ -4,8 +4,8 @@
 
 class Node {
 public:
-	static const int x_bound = 150;
-	static const int y_bound = 150;
+	static const int x_bound = 1000;
+	static const int y_bound = 1000;
 
 	Node(sf::Vector2i position_);
 	~Node();
