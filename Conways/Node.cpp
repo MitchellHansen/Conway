@@ -33,19 +33,19 @@ void Node::Update(std::vector<Node> *node_vec) {
 	// x , y - 1
 	// x - 1 , y
 	if (position.x     < x_bound - 1 && position.x     > -1 && position.y + 1 < y_bound - 1 && position.y + 1 > -1) {
-		if (node_vec->at(multi_to_linear(sf::Vector2i(position.x, position.y + 1))).CurrentState())
+		if (node_vec->operator[](multi_to_linear(sf::Vector2i(position.x, position.y + 1))).CurrentState())
 			neighbors++;
 	}
 	if (position.x + 1 < x_bound - 1 && position.x + 1 > -1 && position.y     < y_bound - 1 && position.y     > -1) {
-		if (node_vec->at(multi_to_linear(sf::Vector2i(position.x + 1, position.y))).CurrentState())
+		if (node_vec->operator[](multi_to_linear(sf::Vector2i(position.x + 1, position.y))).CurrentState())
 			neighbors++;
 	}
 	if (position.x     < x_bound - 1 && position.x     > -1 && position.y - 1 < y_bound - 1 && position.y - 1 > -1) {
-		if (node_vec->at(multi_to_linear(sf::Vector2i(position.x, position.y - 1))).CurrentState())
+		if (node_vec->operator[](multi_to_linear(sf::Vector2i(position.x, position.y - 1))).CurrentState())
 			neighbors++;
 	}
 	if (position.x - 1 < x_bound - 1 && position.x - 1 > -1 && position.y     < y_bound - 1 && position.y     > -1) {
-		if (node_vec->at(multi_to_linear(sf::Vector2i(position.x - 1, position.y))).CurrentState())
+		if (node_vec->operator[](multi_to_linear(sf::Vector2i(position.x - 1, position.y))).CurrentState())
 			neighbors++;
 	}
 
@@ -55,19 +55,19 @@ void Node::Update(std::vector<Node> *node_vec) {
 	// x - 1, y - 1
 
 	if (position.x + 1 < x_bound - 1 && position.x + 1 > -1 && position.y + 1 < y_bound - 1 && position.y + 1 > -1) {
-		if (node_vec->at(multi_to_linear(sf::Vector2i(position.x + 1, position.y + 1))).CurrentState())
+		if (node_vec->operator[](multi_to_linear(sf::Vector2i(position.x + 1, position.y + 1))).CurrentState())
 			neighbors++;
 	}
 	if (position.x + 1 < x_bound - 1 && position.x + 1 > -1 && position.y - 1 < y_bound - 1 && position.y - 1 > -1) {
-		if (node_vec->at(multi_to_linear(sf::Vector2i(position.x + 1, position.y - 1))).CurrentState())
+		if (node_vec->operator[](multi_to_linear(sf::Vector2i(position.x + 1, position.y - 1))).CurrentState())
 			neighbors++;
 	}
 	if (position.x - 1 < x_bound - 1 && position.x - 1 > -1 && position.y + 1 < y_bound - 1 && position.y + 1 > -1) {
-		if (node_vec->at(multi_to_linear(sf::Vector2i(position.x - 1, position.y + 1))).CurrentState())
+		if (node_vec->operator[](multi_to_linear(sf::Vector2i(position.x - 1, position.y + 1))).CurrentState())
 			neighbors++;
 	}
 	if (position.x - 1 < x_bound - 1 && position.x - 1 > -1 && position.y - 1 < y_bound - 1 && position.y  - 1 > -1) {
-		if (node_vec->at(multi_to_linear(sf::Vector2i(position.x - 1, position.y - 1))).CurrentState())
+		if (node_vec->operator[](multi_to_linear(sf::Vector2i(position.x - 1, position.y - 1))).CurrentState())
 			neighbors++;
 	}
 

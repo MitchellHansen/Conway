@@ -4,6 +4,7 @@
 #include <random>
 #include <windows.h>
 #include "Node.h"
+#include <stack>
 
 const int WINDOW_X = 600;
 const int WINDOW_Y = 800;
@@ -29,21 +30,21 @@ int main() {
 	std::uniform_int_distribution<int> rgen(0, 4);
 
 	std::vector<Node> node_vec;
+	std::stack<Node*>* front_stack = new std::stack<Node*>();
+	std::stack<Node*>* back_stack = new std::stack<Node*>();
 
+	// Init nodes, random value, push to front_stack
 	for (int x = 0; x < Node::x_bound; x++) {
 		for (int y = 0; y < Node::y_bound; y++) {
 			node_vec.push_back(Node(sf::Vector2i(x, y)));
 			if (rgen(rng) == 1) {
 				node_vec.at(node_vec.size() - 1).Revive();
+				front_stack->push(&node_vec.at(node_vec.size() - 1));
 			}
 		}
 	}
 
-
-	for (int i = 0; i < node_vec.size(); i++) {
-		node_vec.at(i).ShiftState();
-	}
-
+	// Spites for drawing, probably where the biggest slowdown is
 	sf::RectangleShape live_node;
 	sf::RectangleShape dead_node;
 
@@ -54,15 +55,17 @@ int main() {
 	dead_node.setSize(sf::Vector2f(WINDOW_X / Node::x_bound, WINDOW_Y / Node::y_bound));
 
 
-
-
+	// Init window, and loop data
 	sf::RenderWindow window(sf::VideoMode(WINDOW_X, WINDOW_Y), "Classic Games");
 
 	float step_size = 0.0005f;
 	double frame_time = 0.0, elapsed_time = 0.0, delta_time = 0.0, accumulator_time = 0.0, current_time = 0.0;
+	int frame_count = 0;
 
 
 	while (window.isOpen()) {
+
+		std::cout << elapsed_time / frame_count << "\n";
 
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -70,6 +73,7 @@ int main() {
 				window.close();
 		}
 
+		// Time keeping
 		elapsed_time = elap_time();
 		delta_time = elapsed_time - current_time;
 		current_time = elapsed_time;
@@ -80,11 +84,11 @@ int main() {
 		while ((accumulator_time - step_size) >= step_size) {
 			accumulator_time -= step_size;
 			
+			// Do nothing, FPS tied update()
 		}
 
+		// Implicit dead node color
 		window.clear(sf::Color::Black);
-
-
 
 		for (int i = 0; i < node_vec.size(); i++) {
 			node_vec.at(i).Update(&node_vec);
@@ -105,6 +109,7 @@ int main() {
 			}
 		}
 		
+		frame_count++;
 		window.display();
 
 
