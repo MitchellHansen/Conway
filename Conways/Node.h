@@ -11,7 +11,7 @@ public:
 	~Node();
 
 	void Revive();
-	bool CurrentState();
+	int CurrentState();
 	void ShiftState();
 	void Update(std::vector<Node> *node_vec);
 
@@ -19,8 +19,9 @@ private:
 
 	sf::Vector2i linear_to_multi(int position_);
 	int multi_to_linear(sf::Vector2i position);
+
 	sf::Vector2i position;
-	bool curr_state;
-	bool next_state;
+	int curr_state;
+	int next_state;
 };
 

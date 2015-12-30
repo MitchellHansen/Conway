@@ -35,7 +35,7 @@ void updateRange(std::vector<Node> *node_vec, int start_range_, int end_range_) 
 int main() {
 
 	std::mt19937 rng(time(NULL));
-	std::uniform_int_distribution<int> rgen(0, 10);
+	std::uniform_int_distribution<int> rgen(0, 19);
 
 	std::vector<Node> node_vec;
 
@@ -64,6 +64,9 @@ int main() {
 	std::stack<std::thread> thread_stack;
 
 	sf::Uint8* pixel_array = new sf::Uint8[WINDOW_X * WINDOW_Y * 4];
+	sf::Texture texture;
+	texture.create(WINDOW_X, WINDOW_Y);
+
 
 	while (window.isOpen()) {
 
@@ -87,9 +90,6 @@ int main() {
 			// Do nothing, FPS tied update()
 		}
 
-		// Implicit dead node color
-		window.clear(sf::Color(49, 68, 72));
-
 		for (int i = 0; i < 12; i++) {
 			thread_stack.emplace(updateRange, &node_vec, (node_vec.size() / 12)* i, (node_vec.size() / 12)* (i + 1));
 		}
@@ -98,64 +98,25 @@ int main() {
 			thread_stack.pop();
 		}
 
-		//for (int i = 0; i < node_vec.size(); i++) {
-		//	node_vec.at(i).Update(&node_vec);
-		//}
-
-		for (int i = 0; i < node_vec.size(); i++) {
-			node_vec[i].ShiftState();
-		}
-
-
 
 		sf::VertexArray live_node_vertex_array;
-
-		//for (int i = 0; i < node_vec.size(); i++) {
-		//	if (node_vec.at(i).CurrentState() == true) {
-
-		//		// 6 vert square, one line heaven
-		//		sf::Vector2f square_dimensions(WINDOW_X / Node::x_bound, WINDOW_Y / Node::y_bound);
-
-		//		//sf::Vertex vert1(sf::Vector2f((i % Node::x_bound) * live_node.getGlobalBounds().width, (i / Node::x_bound) * live_node.getGlobalBounds().height), sf::Color(145, 181, 207)); // Top left
-		//		//sf::Vertex vert2(sf::Vector2f((i % Node::x_bound) * live_node.getGlobalBounds().width + square_dimensions.x, (i / Node::x_bound) * live_node.getGlobalBounds().height), sf::Color(145, 181, 207)); // Top right
-		//		//sf::Vertex vert3(sf::Vector2f((i % Node::x_bound) * live_node.getGlobalBounds().width, (i / Node::x_bound) * live_node.getGlobalBounds().height + square_dimensions.y), sf::Color(145, 181, 207)); // Bottom left
-
-		//		//sf::Vertex vert4(sf::Vector2f((i % Node::x_bound) * live_node.getGlobalBounds().width, (i / Node::x_bound) * live_node.getGlobalBounds().height + square_dimensions.y), sf::Color(145, 181, 207)); // Bottom left
-		//		//sf::Vertex vert5(sf::Vector2f((i % Node::x_bound) * live_node.getGlobalBounds().width + square_dimensions.x, (i / Node::x_bound) * live_node.getGlobalBounds().height), sf::Color(145, 181, 207)); // Top right
-		//		sf::Vertex vert6(sf::Vector2f((i % Node::x_bound) * live_node.getGlobalBounds().width + square_dimensions.x, (i / Node::x_bound) * live_node.getGlobalBounds().height + square_dimensions.y), sf::Color(145, 181, 207)); // Bottom right
-
-
-		//		//live_node_vertex_array.append(vert1);
-		//		//live_node_vertex_array.append(vert2);
-		//		//live_node_vertex_array.append(vert3);
-		//		//live_node_vertex_array.append(vert4);
-		//		//live_node_vertex_array.append(vert5);
-		//		live_node_vertex_array.append(vert6);
-
-
-		//		//live_node.setPosition((i % Node::x_bound) * live_node.getGlobalBounds().width, (i / Node::x_bound) * live_node.getGlobalBounds().height);
-
-
-		//	}
-		//}
-
-		sf::Texture texture;
-		texture.create(WINDOW_X, WINDOW_Y);
-
 		sf::Sprite sprite(texture);
 
 		for (int i = 0; i < node_vec.size(); i++) {
-			if (node_vec.at(i).CurrentState() == true) {
-
-
+			node_vec[i].ShiftState();
+			if (node_vec[i].CurrentState() == true) {
 
 				pixel_array[i * 4] = 255; // R?
 				pixel_array[i * 4 + 1] = 255; // G?
 				pixel_array[i * 4 + 2] = 255; // B?
 				pixel_array[i * 4 + 3] = 255; // A?
 
-
-
+			}
+			else {
+				pixel_array[i * 4] = 49; // R?
+				pixel_array[i * 4 + 1] = 68; // G?
+				pixel_array[i * 4 + 2] = 72; // B?
+				pixel_array[i * 4 + 3] = 255; // A?
 			}
 		}
 
