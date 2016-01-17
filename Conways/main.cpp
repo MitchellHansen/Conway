@@ -43,16 +43,11 @@ int main() {
 	for (int x = 0; x < Node::x_bound; x++) {
 		for (int y = 0; y < Node::y_bound; y++) {
 			node_vec.push_back(Node(sf::Vector2i(x, y)));
-			if (rgen(rng) == 1) {
+			if ((x % 30 == 0)) {
 				node_vec.at(node_vec.size() - 1).Revive();
 			}
 		}
 	}
-
-	// Spites for drawing, probably where the biggest slowdown is
-	sf::RectangleShape live_node;
-	live_node.setFillColor(sf::Color(145, 181, 207));
-	live_node.setSize(sf::Vector2f(WINDOW_X / Node::x_bound, WINDOW_Y / Node::y_bound));
 
 	// Init window, and loop data
 	sf::RenderWindow window(sf::VideoMode(WINDOW_X, WINDOW_Y), "Classic Games");
@@ -66,7 +61,7 @@ int main() {
 	sf::Uint8* pixel_array = new sf::Uint8[WINDOW_X * WINDOW_Y * 4];
 	sf::Texture texture;
 	texture.create(WINDOW_X, WINDOW_Y);
-
+	sf::Sprite sprite(texture);
 
 	while (window.isOpen()) {
 
@@ -99,24 +94,23 @@ int main() {
 		}
 
 
-		sf::VertexArray live_node_vertex_array;
-		sf::Sprite sprite(texture);
+
 
 		for (int i = 0; i < node_vec.size(); i++) {
 			node_vec[i].ShiftState();
 			if (node_vec[i].CurrentState() == true) {
 
-				pixel_array[i * 4] = 255; // R?
-				pixel_array[i * 4 + 1] = 255; // G?
-				pixel_array[i * 4 + 2] = 255; // B?
+				pixel_array[i * 4] = 112; // R?
+				pixel_array[i * 4 + 1] = 190; // G?
+				pixel_array[i * 4 + 2] = 249; // B?
 				pixel_array[i * 4 + 3] = 255; // A?
 
 			}
 			else {
-				pixel_array[i * 4] = 49; // R?
-				pixel_array[i * 4 + 1] = 68; // G?
-				pixel_array[i * 4 + 2] = 72; // B?
-				pixel_array[i * 4 + 3] = 255; // A?
+				//pixel_array[i * 4] *= 0.999;// 49; // R?
+				pixel_array[i * 4 + 1] *= 0.999;//68; // G?
+				pixel_array[i * 4 + 2] *= 0.999;//72; // B?
+				pixel_array[i * 4 + 3] *= 0.999;//255; // A?
 			}
 		}
 
