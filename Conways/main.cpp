@@ -6,8 +6,8 @@
 #include <thread>
 #include <stack>
 
-const int WINDOW_X = 1000;
-const int WINDOW_Y = 1000;
+const int WINDOW_X = 300;
+const int WINDOW_Y = 300;
 
 float elap_time() {
 	static __int64 start = 0;
@@ -43,7 +43,7 @@ int main() {
 	for (int x = 0; x < Node::x_bound; x++) {
 		for (int y = 0; y < Node::y_bound; y++) {
 			node_vec.push_back(Node(sf::Vector2i(x, y)));
-			if ((x % 30 == 0)) {
+			if ((x % 5 == 0) || (y % 8 == 0)) {
 				node_vec.at(node_vec.size() - 1).Revive();
 			}
 		}
@@ -63,6 +63,7 @@ int main() {
 	texture.create(WINDOW_X, WINDOW_Y);
 	sf::Sprite sprite(texture);
 
+	
 	while (window.isOpen()) {
 
 		sf::Event event;
@@ -107,12 +108,14 @@ int main() {
 
 			}
 			else {
-				//pixel_array[i * 4] *= 0.999;// 49; // R?
-				pixel_array[i * 4 + 1] *= 0.999;//68; // G?
+				pixel_array[i * 4] *= 0.999;// 49; // R?
+				//pixel_array[i * 4 + 1] *= 0.999;//68; // G?
 				pixel_array[i * 4 + 2] *= 0.999;//72; // B?
 				pixel_array[i * 4 + 3] *= 0.999;//255; // A?
 			}
 		}
+		
+		window.clear();
 
 		texture.update(pixel_array);
 		window.draw(sprite);
