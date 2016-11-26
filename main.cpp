@@ -10,18 +10,18 @@ const int WINDOW_X = 300;
 const int WINDOW_Y = 300;
 
 float elap_time() {
-	static __int64 start = 0;
-	static __int64 frequency = 0;
 
-	if (start == 0) {
-		QueryPerformanceCounter((LARGE_INTEGER*)&start);
-		QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
-		return 0.0f;
+	static std::chrono::time_point<std::chrono::system_clock> start;
+	static bool started = false;
+
+	if (!started) {
+		start = std::chrono::system_clock::now();
+		started = true;
 	}
 
-	__int64 counter = 0;
-	QueryPerformanceCounter((LARGE_INTEGER*)&counter);
-	return (float)((counter - start) / double(frequency));
+	std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+	std::chrono::duration<double> elapsed_time = now - start;
+	return static_cast<float>(elapsed_time.count());
 }
 
 void updateRange(std::vector<Node> *node_vec, int start_range_, int end_range_) {
@@ -93,9 +93,6 @@ int main() {
 			thread_stack.top().join();
 			thread_stack.pop();
 		}
-
-
-
 
 		for (int i = 0; i < node_vec.size(); i++) {
 			node_vec[i].ShiftState();
