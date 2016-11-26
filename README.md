@@ -1,4 +1,4 @@
-# Conway
+# conways-game-of-life
 Simple (slow) simulation of Conways game of life, SFML, C++
 
 ![alt tag](https://github.com/MitchellHansen/Conway/blob/master/Screeny.png)
