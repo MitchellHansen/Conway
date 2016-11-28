@@ -1,7 +1,6 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <random>
-#include <windows.h>
 #include "Node.h"
 #include <thread>
 #include <stack>

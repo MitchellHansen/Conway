@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}) 
 
 # Set the project name 
-set(PNAME floppy-bird) 
+set(PNAME conways-game-of-life) 
 project(${PNAME}) 
 
 # Set up variables, and find SFML 
