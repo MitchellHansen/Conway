@@ -1,16 +1,20 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
 #include <vector>
+#include <cstdlib>
 
 class Node {
 public:
-	static const int x_bound = 300;
-	static const int y_bound = 300;
+	static int x_bound;
+	static int y_bound;
+
+    static void setX(int x){x_bound=x;};
+    static void setY(int y){y_bound=y;};
 
 	Node(sf::Vector2i position_);
 	~Node();
-
 	void Revive();
+    bool filled(std::vector<Node> *node_vec, sf::Vector2f np);
 	int CurrentState();
 	void ShiftState();
 	void Update(std::vector<Node> *node_vec);

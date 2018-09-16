@@ -5,8 +5,8 @@
 #include <thread>
 #include <stack>
 
-const int WINDOW_X = 300;
-const int WINDOW_Y = 300;
+const int WINDOW_X = 600;
+const int WINDOW_Y = 600;
 
 float elap_time() {
 
@@ -33,23 +33,19 @@ void updateRange(std::vector<Node> *node_vec, int start_range_, int end_range_) 
 
 int main() {
 
-	std::mt19937 rng(time(NULL));
+    Node::setX(WINDOW_X);
+    Node::setY(WINDOW_Y);
+
+    sf::Glsl::Vec4 aliveColor = sf::Color::Cyan;
+	
+    std::mt19937 rng(time(NULL));
 	std::uniform_int_distribution<int> rgen(0, 19);
 
 	std::vector<Node> node_vec;
 
-	// Init nodes, random value, push to front_stack
-	for (int x = 0; x < Node::x_bound; x++) {
-		for (int y = 0; y < Node::y_bound; y++) {
-			node_vec.push_back(Node(sf::Vector2i(x, y)));
-			if ((x % 5 == 0) || (y % 8 == 0)) {
-				node_vec.at(node_vec.size() - 1).Revive();
-			}
-		}
-	}
 
 	// Init window, and loop data
-	sf::RenderWindow window(sf::VideoMode(WINDOW_X, WINDOW_Y), "Classic Games");
+	sf::RenderWindow window(sf::VideoMode(WINDOW_X, WINDOW_Y), "Conways");
 
 	float step_size = 0.0005f;
 	double frame_time = 0.0, elapsed_time = 0.0, delta_time = 0.0, accumulator_time = 0.0, current_time = 0.0;
@@ -58,11 +54,39 @@ int main() {
 	std::stack<std::thread> thread_stack;
 
 	sf::Uint8* pixel_array = new sf::Uint8[WINDOW_X * WINDOW_Y * 4];
-	sf::Texture texture;
-	texture.create(WINDOW_X, WINDOW_Y);
-	sf::Sprite sprite(texture);
 
+	srand (time(NULL));	
+	for (int i = 0; i < WINDOW_X * WINDOW_Y * 4; i += 4) {
+		if (rand() % 10 == 5){
+			pixel_array[i + 0] = sf::Color::Cyan.r; // R?
+			pixel_array[i + 1] = sf::Color::Cyan.g; // G?
+			pixel_array[i + 2] = sf::Color::Cyan.b; // B?
+			pixel_array[i + 3] = 255; // A?
+		} else {
+			pixel_array[i + 0] = 0; // R?
+			pixel_array[i + 1] = 0; // G?
+			pixel_array[i + 2] = 0; // B?
+			pixel_array[i + 3] = 0; // A?
+		}
+	}
+
+	sf::Texture frontBuffer;
+	sf::Texture backBuffer;
+
+	frontBuffer.create(WINDOW_X, WINDOW_Y);
+	frontBuffer.update(pixel_array);
+
+	backBuffer.create(WINDOW_X, WINDOW_Y);
+	backBuffer.update(pixel_array);
+
+	sf::Sprite sprite(backBuffer);
+
+	sf::Shader shader;
 	
+	shader.loadFromFile("../vertex.glsl", "../fragment.glsl");
+	
+	bool flipp = true;
+
 	while (window.isOpen()) {
 
 		sf::Event event;
@@ -85,41 +109,23 @@ int main() {
 			// Do nothing, FPS tied update()
 		}
 
-		for (int i = 0; i < 12; i++) {
-			thread_stack.emplace(updateRange, &node_vec, (node_vec.size() / 12)* i, (node_vec.size() / 12)* (i + 1));
-		}
-		while (!thread_stack.empty()) {
-			thread_stack.top().join();
-			thread_stack.pop();
-		}
-
-		for (int i = 0; i < node_vec.size(); i++) {
-			node_vec[i].ShiftState();
-			if (node_vec[i].CurrentState() == true) {
-
-				pixel_array[i * 4] = 112; // R?
-				pixel_array[i * 4 + 1] = 190; // G?
-				pixel_array[i * 4 + 2] = 249; // B?
-				pixel_array[i * 4 + 3] = 255; // A?
-
-			}
-			else {
-				pixel_array[i * 4] *= 0.999;// 49; // R?
-				//pixel_array[i * 4 + 1] *= 0.999;//68; // G?
-				pixel_array[i * 4 + 2] *= 0.999;//72; // B?
-				pixel_array[i * 4 + 3] *= 0.999;//255; // A?
-			}
-		}
-		
 		window.clear();
+	
+		shader.setUniform("alive_color", aliveColor);	
+		shader.setUniform("backBuffer", backBuffer);
+		shader.setUniform("frontBuffer", frontBuffer);	
+		
+		if (flipp) {
+			flipp = false;
+			sprite.setTexture(backBuffer);
+		} else {
+			flipp = true;
+			sprite.setTexture(frontBuffer);
+		}
 
-		texture.update(pixel_array);
-		window.draw(sprite);
-
+	    shader.setUniform("flipp", flipp);	
+		window.draw(sprite, &shader);
 		window.display();
-
-
-
 	}
 	return 0;
 
