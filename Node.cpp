@@ -8,6 +8,22 @@ Node::Node(sf::Vector2i position_) {
 	next_state = false;
 }
 
+Node::Node(sf::Vector2i position_, std::vector<int> color) {
+	position = position_;
+	curr_state = false;
+	next_state = false;
+
+	b_r = color[0];
+	b_g = color[1];
+	b_b = color[2];
+	b_a = color[3];
+
+	r = 0;
+	g = 0;
+	b = 0;
+	a = 0;
+}
+
 
 Node::~Node() {
 }
@@ -15,6 +31,21 @@ Node::~Node() {
 void Node::Revive() {
 	next_state = true;
 	curr_state = true;
+}
+
+void Node::Dim() {
+
+	if (CurrentState() == true) {
+		r = b_r;
+		g = b_g;
+		b = b_b;
+		a = b_a;
+	} else {
+		r *= 0.996;
+		g *= 0.996;
+		b *= 0.996;
+		a *= 0.996;
+	}
 }
 
 int Node::CurrentState() {

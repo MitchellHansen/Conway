@@ -4,16 +4,28 @@
 
 class Node {
 public:
-	static const int x_bound = 300;
-	static const int y_bound = 300;
+	static const int x_bound = 500;
+	static const int y_bound = 500;
 
 	Node(sf::Vector2i position_);
+	Node(sf::Vector2i position_, std::vector<int> color);
 	~Node();
 
 	void Revive();
 	int CurrentState();
 	void ShiftState();
 	void Update(std::vector<Node> *node_vec);
+	void Dim();
+
+	float r;
+	float g;
+	float b;
+	float a;
+
+	float b_r;
+	float b_g;
+	float b_b;
+	float b_a;
 
 private:
 
@@ -25,5 +37,7 @@ private:
 	int next_state;
 
 
+
 };
+
 
